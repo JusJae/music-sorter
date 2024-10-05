@@ -1,8 +1,11 @@
+from django.conf import settings
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
-    client_id='YOUR_CLIENT_ID', client_secret='YOUR_CLIENT_SECRET'))
+    client_id=settings.SPOTIPY_CLIENT_ID,
+    client_secret=settings.SPOTIPY_CLIENT_SECRET
+))
 
 
 def get_genre(track_name):
