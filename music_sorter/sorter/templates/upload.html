@@ -1,0 +1,6 @@
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="file">
+    <input type="text" name="track_name" placeholder="Track Name">
+    <button type="submit">Upload</button>
+</form>
