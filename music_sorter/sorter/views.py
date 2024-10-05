@@ -1,9 +1,15 @@
+import os
+import zipfile
+
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+
 from .models import MusicFile
 from .tasks import process_music_file
-from spotipy.oauth2 import SpotifyOAuth
-import spotipy
-import os
 
 
 def spotify_auth(request):
@@ -50,7 +56,9 @@ def upload_files(request):
 
 
 def success(request):
-    return render(request, 'success.html')
+    sorted_files = MusicFile.objects.all()
+    context = {'sorted_files': sorted_files}
+    return render(request, 'success.html', context)
 
 
 def get_user_tracks(request):
@@ -59,3 +67,31 @@ def get_user_tracks(request):
     results = sp.current_user_saved_tracks()
     tracks = [item['track'] for item in results['items']]
     return render(request, 'tracks.html', {'tracks': tracks})
+
+
+def create_genre_directory(genre):
+    base_dir = 'sorted_music'
+    genre_dir = os.path.join(base_dir, genre)
+    if not os.path.exists(genre_dir):
+        os.makedirs(genre_dir)
+    return genre_dir
+
+
+def download_all(request):
+    zip_subdir = "sorted_music"
+    zip_filename = f"{zip_subdir}.zip"
+
+    # Open Httpresponse to grab in-memory ZIP contents
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+
+    # Zip compressor
+    with zipfile.ZipFile(response, 'w') as zip_file:
+        # Add files to zip
+        base_dir = 'sorted_music'
+        for folder_name, subfolders, filenames in os.walk(base_dir):
+            for filename in filenames:
+                file_path = os.path.join(folder_name, filename)
+                zip_file.write(file_path, os.path.relpath(file_path, base_dir))
+
+    return response
