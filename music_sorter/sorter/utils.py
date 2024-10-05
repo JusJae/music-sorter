@@ -1,5 +1,6 @@
 from django.conf import settings
 import spotipy
+import os
 from spotipy.oauth2 import SpotifyClientCredentials
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
@@ -16,3 +17,11 @@ def get_genre(track_name):
         artist = sp.artist(artist_id)
         return artist['genres']
     return None
+
+
+def create_genre_directory(genre):
+    base_dir = 'sorted_music'
+    genre_dir = os.path.join(base_dir, genre)
+    if not os.path.exists(genre_dir):
+        os.makedirs(genre_dir)
+    return genre_dir

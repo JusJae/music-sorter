@@ -69,13 +69,6 @@ def get_user_tracks(request):
     return render(request, 'tracks.html', {'tracks': tracks})
 
 
-def create_genre_directory(genre):
-    base_dir = 'sorted_music'
-    genre_dir = os.path.join(base_dir, genre)
-    if not os.path.exists(genre_dir):
-        os.makedirs(genre_dir)
-    return genre_dir
-
 
 def download_all(request):
     zip_subdir = "sorted_music"
