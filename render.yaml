@@ -1,8 +1,8 @@
 databases:
-  - name: music-sorterdb
+  - name: music-sorter
     plan: free
-    databaseName: music-sorter
-    user: music-sorter
+    databaseName: musicsorter
+    user: musicsorter_user
 
 services:
   - type: web
@@ -14,7 +14,7 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: music-sorterdb
+          name: music-sorter
           property: connectionString
       - key: SECRET_KEY
         generateValue: true
